@@ -1,0 +1,92 @@
+.App {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.register-form {
+  background: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  width: 450px; /* Increase the width of the form */
+  text-align:center;
+  max-width: 90%; /* This ensures the form doesn't overflow on smaller screens */
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+.form-tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tab {
+  width: 50%;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.active {
+  background-color: #e9ecef;
+  font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Ensure items are aligned at the start of the flex container */
+  margin-bottom: 15px;
+  padding-left: 10px; /* Add padding to prevent it from sticking to the edge */
+}
+
+.checkbox-group label {
+  margin: 0;
+  padding-left: 8px; /* Adjust space between checkbox and label */
+  font-size: 1rem; /* Maintain font size for label */
+}
+
+.checkbox-group input {
+  margin: 0; /* Remove any extra margins */
+  width: auto; /* Ensure the checkbox maintains its size */
+}
+
+
+
+
+.submit-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.social-login {
+  margin-bottom: 15px;
+}
+
+.social-icons a {
+  margin: 0 10px;
+  color: #007bff;
+  font-size: 20px;
+  text-decoration: none;
+}
