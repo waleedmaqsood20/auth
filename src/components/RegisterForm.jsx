@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios'; // Import axios
 import FormInput from './FormInput';
 import SocialLogin from './SocialLogin';
 
@@ -21,23 +22,55 @@ const RegisterForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (activeForm === 'signIn') {
       // Handle Sign In API submission
-      console.log('Sign In data:', formData);
+      try {
+        const response = await axios.post('http://localhost:6003/api-docs/#/default/post_login', {
+          email: formData.email,
+          password: formData.password,
+        });
+        console.log('Sign In Successful:', response.data);
+        alert('Sign In Successful');
+      } catch (error) {
+        console.error('Sign In Error:', error);
+        alert('Sign In Failed');
+      }
     } else if (activeForm === 'signUp') {
-      // Handle Sign Up API submission
+      // Handle Sign Up API submissions
       if (formData.terms) {
-        console.log('Sign Up data:', formData);
+        try {
+          const response = await axios.post('http://localhost:6003/api-docs/#/default/post_signup', {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          });
+          console.log('Sign Up Successful:', response.data);
+          alert('Sign Up Successful');
+        } catch (error) {
+          console.error('Sign Up Error:', error);
+          alert('Sign Up Failed');
+        }
       } else {
         alert('Please agree to the terms and conditions.');
       }
     } else if (activeForm === 'register') {
       // Handle Register API submission
       if (formData.terms) {
-        console.log('Register data:', formData);
+        try {
+          const response = await axios.post('http://localhost:6003/api-docs/#/default/post_register', {
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          });
+          console.log('Register Successful:', response.data);
+          alert('Register Successful');
+        } catch (error) {
+          console.error('Register Error:', error);
+          alert('Register Failed');
+        }
       } else {
         alert('Please agree to the terms and conditions.');
       }
@@ -67,19 +100,15 @@ const RegisterForm = () => {
         </button>
       </div>
       <form onSubmit={handleSubmit}>
-        {/* Add SocialLogin component to render social login icons */}
-        <SocialLogin />  
+        <SocialLogin />
         <p>or:</p>
-        </form>
-
-      <form onSubmit={handleSubmit}>
         {activeForm === 'signIn' && (
           <>
             <FormInput
-              label="Name"
-              type="text"
-              name="name"
-              value={formData.name}
+              label="Email"
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               required
             />
@@ -125,6 +154,14 @@ const RegisterForm = () => {
               onChange={handleChange}
               required
             />
+            <FormInput
+              label="Password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
             <div className="checkbox-group">
               <input
                 type="checkbox"
@@ -135,7 +172,7 @@ const RegisterForm = () => {
               />
               <label>I agree with terms and conditions</label>
             </div>
-            <button type="submit" className="submit-btn">Subscribe</button>
+            <button type="submit" className="submit-btn">Sign Up</button>
           </>
         )}
 
@@ -154,6 +191,14 @@ const RegisterForm = () => {
               type="email"
               name="email"
               value={formData.email}
+              onChange={handleChange}
+              required
+            />
+            <FormInput
+              label="Password"
+              type="password"
+              name="password"
+              value={formData.password}
               onChange={handleChange}
               required
             />
