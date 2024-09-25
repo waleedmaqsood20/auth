@@ -24,56 +24,58 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    console.log(`Submitting form: ${activeForm}`);  // Log which form is being submitted
+    console.log('Form Data:', formData);  // Log form data for debugging
+    
+    try {
+      if (activeForm === 'signIn') {
+        // Log API call attempt
+        console.log('Attempting Sign In...');
 
-    if (activeForm === 'signIn') {
-      // Handle Sign In API submission
-      try {
-        const response = await axios.post('http://localhost:6003/api-docs/#/default/post_login', {
+        const response = await axios.post('http://localhost:5009/login', {
           email: formData.email,
           password: formData.password,
         });
-        console.log('Sign In Successful:', response.data);
+
+        console.log('Sign In Successful:', response.data);  // Log success
         alert('Sign In Successful');
-      } catch (error) {
-        console.error('Sign In Error:', error);
-        alert('Sign In Failed');
-      }
-    } else if (activeForm === 'signUp') {
-      // Handle Sign Up API submissions
-      if (formData.terms) {
-        try {
-          const response = await axios.post('http://localhost:6003/api-docs/#/default/post_signup', {
+      } else if (activeForm === 'signUp') {
+        if (formData.terms) {
+          // Log API call attempt
+          console.log('Attempting Sign Up...');
+
+          const response = await axios.post('http://localhost:6002/api-docs/#/default/post_signup', {
             name: formData.name,
             email: formData.email,
             password: formData.password,
           });
-          console.log('Sign Up Successful:', response.data);
+
+          console.log('Sign Up Successful:', response.data);  // Log success
           alert('Sign Up Successful');
-        } catch (error) {
-          console.error('Sign Up Error:', error);
-          alert('Sign Up Failed');
+        } else {
+          alert('Please agree to the terms and conditions.');
         }
-      } else {
-        alert('Please agree to the terms and conditions.');
-      }
-    } else if (activeForm === 'register') {
-      // Handle Register API submission
-      if (formData.terms) {
-        try {
-          const response = await axios.post('http://localhost:6003/api-docs/#/default/post_register', {
+      } else if (activeForm === 'register') {
+        if (formData.terms) {
+          // Log API call attempt
+          console.log('Attempting Registration...');
+
+          const response = await axios.post('http://localhost:5009/register', {
             name: formData.name,
             email: formData.email,
             password: formData.password,
           });
-          console.log('Register Successful:', response.data);
+
+          console.log('Register Successful:', response.data);  // Log success
           alert('Register Successful');
-        } catch (error) {
-          console.error('Register Error:', error);
-          alert('Register Failed');
+        } else {
+          alert('Please agree to the terms and conditions.');
         }
-      } else {
-        alert('Please agree to the terms and conditions.');
       }
+    } catch (error) {
+      console.error(`Error during ${activeForm} API call:`, error);  // Log error with form type
+      alert(`${activeForm} Failed`);
     }
   };
 
