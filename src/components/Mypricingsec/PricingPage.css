@@ -1,0 +1,46 @@
+/* src/components/Mypricingsec/PricingPage.css */
+
+/* Pricing page styles */
+.pricing-page {
+    text-align: center;
+    margin: 20px;
+  }
+  
+  .pricing-cards {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  
+  .pricing-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .pricing-card h2 {
+    font-size: 1.5em;
+  }
+  
+  .pricing-card h3 {
+    font-size: 1.2em;
+    color: #333;
+  }
+  
+  .pricing-card button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pricing-card button:hover {
+    background-color: #0056b3;
+  }
+  
