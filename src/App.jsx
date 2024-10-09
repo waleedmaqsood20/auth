@@ -2,14 +2,14 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import RegisterForm from './components/RegisterForm';
-import PricingPage from './components/Mypricingsec/PricingPage';
+import PricingPage from './components/pricingsec/PricingPage';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <nav>
+        {/* <nav>
           <ul>
             <li>
               <Link to="/">Home</Link>
@@ -18,7 +18,7 @@ function App() {
               <Link to="/pricing">Pricing</Link>
             </li>
           </ul>
-        </nav>
+        </nav> */}
 
         <Routes>
           <Route index element={<RegisterForm />} />

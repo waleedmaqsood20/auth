@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
-import axios from 'axios'; // Import axios
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import FormInput from './FormInput';
 import SocialLogin from './SocialLogin';
 
 const RegisterForm = () => {
-  const [activeForm, setActiveForm] = useState('signIn'); // Tracks the active form (signIn, signUp, register)
-  const [loading, setLoading] = useState(false); // For disabling the button on submit
+  const navigate = useNavigate();
+  const [activeForm, setActiveForm] = useState('signIn');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -13,9 +15,10 @@ const RegisterForm = () => {
     confirmPassword: '',
     rememberMe: false,
     terms: false,
+    userId: '',
+    plan: '',
   });
 
-  // Reset form data when switching between forms
   const resetFormData = () => {
     setFormData({
       name: '',
@@ -24,50 +27,72 @@ const RegisterForm = () => {
       confirmPassword: '',
       rememberMe: false,
       terms: false,
+      userId: '',
+      plan: '',
     });
   };
+
+  useEffect(() => {
+    resetFormData();
+  }, [activeForm]);
 
   const handleFormSwitch = (form) => {
     setActiveForm(form);
-    resetFormData();
   };
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: type === 'checkbox' ? checked : value,
-    });
+    }));
   };
 
-  // Form submission handler
+  const validateForm = () => {
+    const errors = [];
+
+    if (activeForm === 'signIn') {
+      if (!formData.email.trim()) errors.push('Email is required');
+      if (!formData.password.trim()) errors.push('Password is required');
+    } else if (activeForm === 'signUp') {
+      if (!formData.username.trim()) errors.push('Name is required');
+      if (!formData.email.trim()) errors.push('Email is required');
+      if (!formData.password.trim()) errors.push('Password is required');
+      if (!formData.confirmPassword.trim()) errors.push('Confirm Password is required');
+      if (!formData.terms) errors.push('You must agree to the terms and conditions');
+      if (formData.password !== formData.confirmPassword) errors.push('Passwords do not match');
+    } else if (activeForm === 'subscribe') {
+      if (!formData.userId.trim()) errors.push('User ID is required');
+      if (!formData.plan.trim()) errors.push('Plan is required');
+    }
+
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.push('Please enter a valid email address');
+    }
+
+    if ((activeForm === 'signIn' || activeForm === 'signUp') && formData.password && formData.password.length < 6) {
+      errors.push('Password must be at least 6 characters long');
+    }
+
+    return errors;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(`Submitting form: ${activeForm}`); // Log active form
-    console.log('Form Data:', formData); // Log form data
+    console.log(`Submitting form: ${activeForm}`);
+    console.log('Form Data:', formData);
 
-    // Basic validation
-    if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      alert("Please enter a valid email address.");
-      return;
-    }
+    const errors = validateForm();
 
-    if (formData.password.length < 6) {
-      alert("Password must be at least 6 characters long.");
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword && activeForm !== 'signIn') {
-      alert("Passwords do not match.");
+    if (errors.length > 0) {
+      alert(errors.join('\n'));
       return;
     }
 
     try {
       setLoading(true);
 
-      // Sign In Logic
       if (activeForm === 'signIn') {
         console.log('Attempting Sign In...');
         const response = await axios.post('http://localhost:3000/login', {
@@ -77,42 +102,29 @@ const RegisterForm = () => {
 
         console.log('Sign In Successful:', response.data);
         alert('Sign In Successful');
-        resetFormData(); // Clear form data after successful sign in
+        navigate('/pricing');
 
-      // Sign Up Logic
       } else if (activeForm === 'signUp') {
-        if (formData.terms) {
-          console.log('Attempting Sign Up...');
+        console.log('Attempting Sign Up...');
+        const response = await axios.post('http://localhost:3000/register', {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        });
 
-          const response = await axios.post('http://localhost:3000/signup', {
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          });
+        console.log('Sign Up Successful:', response.data);
+        alert('Sign Up Successful');
+        navigate('/pricing');
 
-          console.log('Sign Up Successful:', response.data);
-          alert('Sign Up Successful');
-          resetFormData(); // Clear form data after successful sign up
-        } else {
-          alert('Please agree to the terms and conditions.');
-        }
+      } else if (activeForm === 'subscribe') {
+        console.log('Attempting Subscription...');
+        const response = await axios.post('http://localhost:3000/subscribe', {
+          email: formData.userId,
+          name: formData.plan,
+        });
 
-      // Register Logic
-      } else if (activeForm === 'register') {
-        if (formData.terms) {
-          console.log('Attempting Registration...');
-          const response = await axios.post('http://localhost:3000/register', {
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-          });
-
-          console.log('Register Successful:', response.data);
-          alert('Register Successful');
-          resetFormData(); // Clear form data after successful registration
-        } else {
-          alert('Please agree to the terms and conditions.');
-        }
+        console.log('Subscription Successful:', response.data);
+        alert('Subscription Successful');
       }
     } catch (error) {
       console.error(`Error during ${activeForm} API call:`, error);
@@ -142,10 +154,10 @@ const RegisterForm = () => {
           Sign Up
         </button>
         <button
-          className={`tab ${activeForm === 'register' ? 'active' : ''}`}
-          onClick={() => handleFormSwitch('register')}
+          className={`tab ${activeForm === 'subscribe' ? 'active' : ''}`}
+          onClick={() => handleFormSwitch('subscribe')}
         >
-          Register
+          Subscribe
         </button>
       </div>
       <form onSubmit={handleSubmit}>
@@ -192,10 +204,9 @@ const RegisterForm = () => {
             <FormInput
               label="Name"
               type="text"
-              name="name"
-              value={formData.name}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              required
             />
             <FormInput
               label="Email"
@@ -203,7 +214,6 @@ const RegisterForm = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              required
             />
             <FormInput
               label="Password"
@@ -211,7 +221,6 @@ const RegisterForm = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              required
             />
             <FormInput
               label="Confirm Password"
@@ -219,7 +228,6 @@ const RegisterForm = () => {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              required
             />
             <div className="checkbox-group">
               <input
@@ -227,7 +235,6 @@ const RegisterForm = () => {
                 name="terms"
                 checked={formData.terms}
                 onChange={handleChange}
-                required
               />
               <label>I agree with terms and conditions</label>
             </div>
@@ -237,44 +244,26 @@ const RegisterForm = () => {
           </>
         )}
 
-        {activeForm === 'register' && (
+        {activeForm === 'subscribe' && (
           <>
             <FormInput
-              label="Name"
+              label="User ID"
               type="text"
-              name="name"
-              value={formData.name}
+              name="userId"
+              value={formData.userId}
               onChange={handleChange}
               required
             />
             <FormInput
-              label="Email"
-              type="email"
-              name="email"
-              value={formData.email}
+              label="Plan"
+              type="text"
+              name="plan"
+              value={formData.plan}
               onChange={handleChange}
               required
             />
-            <FormInput
-              label="Password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                name="terms"
-                checked={formData.terms}
-                onChange={handleChange}
-                required
-              />
-              <label>I agree with terms and conditions</label>
-            </div>
             <button type="submit" className="submit-btn" disabled={loading}>
-              {loading ? 'Submitting...' : 'Register'}
+              {loading ? 'Submitting...' : 'Subscribe'}
             </button>
           </>
         )}
