@@ -1,4 +1,5 @@
 import React from 'react';
+import FacebookLogin from './FacebookLogin'; // Ensure this is correct
 
 const SocialLogin = () => {
   const iconStyle = {
@@ -7,13 +8,23 @@ const SocialLogin = () => {
     objectFit: 'contain', // Ensure the aspect ratio is preserved
   };
 
+  const handleFacebookLogin = (response) => {
+    if (response.authResponse) {
+      console.log('Welcome! Fetching your information....');
+      window.FB.api('/me', { fields: 'name,email' }, (response) => {
+        console.log('Good to see you, ' + response.name + '.');
+        // Handle user information, like sending it to your backend
+      });
+    } else {
+      console.log('User cancelled login or did not fully authorize.');
+    }
+  };
+
   return (
     <div className="social-login">
       <p>Sign up with:</p>
       <div className="social-icons">
-        <a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">
-          <img src="/images/facebook.png" alt="Facebook" style={iconStyle} />
-        </a>
+        <FacebookLogin onLogin={handleFacebookLogin} /> {/* Using the FacebookLogin component */}
         <a href="https://accounts.google.com/" target="_blank" rel="noopener noreferrer">
           <img src="/images/search.png" alt="Google" style={iconStyle} />
         </a>
